@@ -1,1 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tarefas Lucas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #252525, #404040, #252525);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            background-color: #0099cc;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 0;
+        }
+
+        .checklist {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        li input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        li label {
+            flex: 1;
+        }
+
+        li button {
+            background-color: #ff3300;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer.
+        }
+
+        li input[type="text"], li input[type="datetime-local"] {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            color: white;
+        }
+
+        #add-task-btn, #mark-all-btn {
+            background: #ff3300;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 20px 5px;
+            cursor: pointer.
+        }
+
+        #mark-all-btn {
+            background: #0099cc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tarefas Lucas</h1>
+
+    <div class="checklist">
+        <h2>Checklist</h2>
+        <ul id="checklist-items">
+            <li>
+                <input type="checkbox" id="task1">
+                <label for="task1"><input type="text" placeholder="Tarefa 1"></label>
+                <input type="datetime-local" id="task1-datetime">
+                <button onclick="deleteTask(this)">Excluir</button>
+            </li>
+            <!-- Adicione mais itens aqui -->
+            <li>
+                <input type="checkbox" id="task21">
+                <label for="task21"><input type="text" placeholder="Tarefa 21"></label>
+                <input type="datetime-local" id="task21-datetime">
+                <button onclick="deleteTask(this)">Excluir</button>
+            </li>
+        </ul>
+        <button id="add-task-btn" onclick="addTask()">Adicionar Tarefa</button>
+        <button id="mark-all-btn">Marcar Todas as Tarefas</button>
+    </div>
+
+    <script>
+        function addTask() {
+            var list = document.getElementById("checklist-items");
+            var newItem = document.createElement("li");
+            var newCheckBox = document.createElement("input");
+            newCheckBox.type = "checkbox";
+            var newLabel = document.createElement("label");
+            var newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.placeholder = "Nova Tarefa";
+            var newDateInput = document.createElement("input");
+            newDateInput.type = "datetime-local";
+            var deleteButton = document.createElement("button");
+            deleteButton.textContent = "Excluir";
+            deleteButton.onclick = function () {
+                deleteTask(this);
+            };
+            newLabel.appendChild(newInput);
+            newItem.appendChild(newCheckBox);
+            newItem.appendChild(newLabel);
+            newItem.appendChild(newDateInput);
+            newItem.appendChild(deleteButton);
+            list.appendChild(newItem);
+        }
+
+        function deleteTask(button) {
+            var listItem = button.parentElement;
+            var list = listItem.parentElement;
+            list.removeChild(listItem);
+        }
+
+        function taskCompleted(checkbox) {
+            if (checkbox.checked) {
+                alert('Tarefa concluída: ' + checkbox.parentElement.querySelector('input[type="text"]').value);
+            }
+        }
+
+        function checkDueDates() {
+            const now = new Date().getTime() + 3 * 60 * 60 * 1000; // 3 horas de diferença para Brasília
+            const dateInputs = document.querySelectorAll("input[type='datetime-local']");
+            dateInputs.forEach(function (dateInput) {
+                const dueDate = new Date(dateInput.value).getTime();
+                if (!isNaN(dueDate) && !dateInput.checked && dueDate - now < 86400000) { // 86400000 ms = 24 horas
+                    alert('O prazo está se esgotando: ' + dateInput.parentElement.querySelector('input[type="text"]').value);
+                }
+            });
+        }
+
+        const checkboxes = document.querySelectorAll("input[type='checkbox']");
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function() {
+                taskCompleted(this);
+            });
+        });
+
+        // Verifique as datas de vencimento quando a página carregar
+        checkDueDates();
+
+        // Verifique as datas de vencimento periodicamente
+        setInterval(checkDueDates, 60000); // Verificar a cada minuto (60000 ms)
+    </script>
+</body>
+</html>
 
